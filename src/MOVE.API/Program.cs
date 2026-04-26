@@ -1,4 +1,6 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using MOVE.Application.Behaviours;
 using MOVE.Domain.Interfaces;
 using MOVE.Infrastructure.Data;
 using MOVE.Infrastructure.Repositories;
@@ -13,13 +15,22 @@ builder.Services.AddDbContext<MoveDbContext>(options =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-// MediatR
+// MediatR + Pipeline Behaviour
 builder.Services.AddMediatR(cfg =>
+{
 	cfg.RegisterServicesFromAssembly(
-		typeof(MOVE.Application.Products.Queries.GetAllProductsQuery).Assembly));
+		typeof(MOVE.Application.Products.Queries.GetAllProductsQuery).Assembly);
+	cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+});
+
+// FluentValidation
+builder.Services.AddValidatorsFromAssembly(
+	typeof(MOVE.Application.Products.Commands.CreateProductCommandValidator).Assembly);
 
 // AutoMapper
-builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MOVE.Application.Mappings.MappingProfile>());
+builder.Services.AddAutoMapper(cfg =>
+	cfg.AddProfile<MOVE.Application.Mappings.MappingProfile>());
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
