@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MOVE.Application.Products.Commands;
 using MOVE.Application.Products.Queries;
@@ -32,6 +33,7 @@ public class ProductsController : ControllerBase
 	}
 
 	[HttpPost]
+	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
 	{
 		var product = await _mediator.Send(command);
@@ -39,6 +41,7 @@ public class ProductsController : ControllerBase
 	}
 
 	[HttpPut("{id}")]
+	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> Update(int id, [FromBody] UpdateProductCommand command)
 	{
 		if (id != command.Id) return BadRequest();
@@ -48,6 +51,7 @@ public class ProductsController : ControllerBase
 	}
 
 	[HttpDelete("{id}")]
+	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> Delete(int id)
 	{
 		var result = await _mediator.Send(new DeleteProductCommand(id));

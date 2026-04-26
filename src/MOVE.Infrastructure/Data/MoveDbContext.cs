@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MOVE.Domain.Entities;
 
 namespace MOVE.Infrastructure.Data;
 
-public class MoveDbContext : DbContext
+public class MoveDbContext : IdentityDbContext<IdentityUser>
 {
 	public MoveDbContext(DbContextOptions<MoveDbContext> options)
 		: base(options) { }
