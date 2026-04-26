@@ -18,9 +18,9 @@ builder.Services.AddMediatR(cfg =>
 	cfg.RegisterServicesFromAssembly(
 		typeof(MOVE.Application.Products.Queries.GetAllProductsQuery).Assembly));
 
+// AutoMapper
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MOVE.Application.Mappings.MappingProfile>());
 builder.Services.AddControllers();
-
-// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

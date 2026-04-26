@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using MOVE.Application.DTOs;
 using MOVE.Domain.Entities;
 using MOVE.Domain.Interfaces;
 
@@ -10,19 +12,21 @@ public record CreateProductCommand(
 	decimal Price,
 	int StockQuantity,
 	string ImageUrl,
-	int CategoryId) : IRequest<Product>;
+	int CategoryId) : IRequest<ProductDto>;
 
 public class CreateProductCommandHandler
-	: IRequestHandler<CreateProductCommand, Product>
+	: IRequestHandler<CreateProductCommand, ProductDto>
 {
 	private readonly IProductRepository _repository;
+	private readonly IMapper _mapper;
 
-	public CreateProductCommandHandler(IProductRepository repository)
+	public CreateProductCommandHandler(IProductRepository repository, IMapper mapper)
 	{
 		_repository = repository;
+		_mapper = mapper;
 	}
 
-	public async Task<Product> Handle(
+	public async Task<ProductDto> Handle(
 		CreateProductCommand request,
 		CancellationToken cancellationToken)
 	{
@@ -38,6 +42,6 @@ public class CreateProductCommandHandler
 		};
 
 		await _repository.AddAsync(product);
-		return product;
+		return _mapper.Map<ProductDto>(product);
 	}
 }

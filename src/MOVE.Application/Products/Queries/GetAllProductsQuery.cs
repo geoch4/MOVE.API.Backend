@@ -1,25 +1,29 @@
-﻿using MediatR;
-using MOVE.Domain.Entities;
+﻿using AutoMapper;
+using MediatR;
+using MOVE.Application.DTOs;
 using MOVE.Domain.Interfaces;
 
 namespace MOVE.Application.Products.Queries;
 
-public record GetAllProductsQuery() : IRequest<IEnumerable<Product>>;
+public record GetAllProductsQuery() : IRequest<IEnumerable<ProductDto>>;
 
 public class GetAllProductsQueryHandler
-	: IRequestHandler<GetAllProductsQuery, IEnumerable<Product>>
+	: IRequestHandler<GetAllProductsQuery, IEnumerable<ProductDto>>
 {
 	private readonly IProductRepository _repository;
+	private readonly IMapper _mapper;
 
-	public GetAllProductsQueryHandler(IProductRepository repository)
+	public GetAllProductsQueryHandler(IProductRepository repository, IMapper mapper)
 	{
 		_repository = repository;
+		_mapper = mapper;
 	}
 
-	public async Task<IEnumerable<Product>> Handle(
+	public async Task<IEnumerable<ProductDto>> Handle(
 		GetAllProductsQuery request,
 		CancellationToken cancellationToken)
 	{
-		return await _repository.GetAllAsync();
+		var products = await _repository.GetAllAsync();
+		return _mapper.Map<IEnumerable<ProductDto>>(products);
 	}
 }
