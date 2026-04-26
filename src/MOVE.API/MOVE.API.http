@@ -1,0 +1,6 @@
+@MOVE.API_HostAddress = http://localhost:5267
+
+GET {{MOVE.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

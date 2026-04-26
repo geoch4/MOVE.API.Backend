@@ -1,0 +1,38 @@
+using Microsoft.EntityFrameworkCore;
+using MOVE.Domain.Interfaces;
+using MOVE.Infrastructure.Data;
+using MOVE.Infrastructure.Repositories;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// DbContext
+builder.Services.AddDbContext<MoveDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Repositories
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+// MediatR
+builder.Services.AddMediatR(cfg =>
+	cfg.RegisterServicesFromAssembly(
+		typeof(MOVE.Application.Products.Queries.GetAllProductsQuery).Assembly));
+
+builder.Services.AddControllers();
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();

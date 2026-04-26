@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MOVE.API/MOVE.API.csproj" />
+    <Project Path="src/MOVE.Application/MOVE.Application.csproj" />
+    <Project Path="src/MOVE.Domain/MOVE.Domain.csproj" />
+    <Project Path="src/MOVE.Infrastructure/MOVE.Infrastructure.csproj" />
+  </Folder>
+</Solution>
