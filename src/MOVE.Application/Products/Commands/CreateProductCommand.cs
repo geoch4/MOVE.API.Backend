@@ -2,7 +2,7 @@
 using MediatR;
 using MOVE.Application.DTOs;
 using MOVE.Domain.Entities;
-using MOVE.Domain.Interfaces;
+using MOVE.Application.Interfaces;
 
 namespace MOVE.Application.Products.Commands;
 

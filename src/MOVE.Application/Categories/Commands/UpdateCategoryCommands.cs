@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MOVE.Application.Interfaces;
 using MOVE.Domain.Interfaces;
 
 namespace MOVE.Application.Categories.Commands;

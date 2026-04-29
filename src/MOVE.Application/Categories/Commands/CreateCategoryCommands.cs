@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using MOVE.Application.Interfaces;
 using MOVE.Domain.Entities;
 using MOVE.Domain.Interfaces;
 

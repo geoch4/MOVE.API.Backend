@@ -1,13 +1,14 @@
+using System.Text;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MOVE.Application.Behaviours;
+using MOVE.Application.Interfaces;
 using MOVE.Domain.Interfaces;
 using MOVE.Infrastructure.Data;
 using MOVE.Infrastructure.Repositories;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

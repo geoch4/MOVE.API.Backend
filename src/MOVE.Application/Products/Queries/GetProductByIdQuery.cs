@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using MOVE.Application.DTOs;
-using MOVE.Domain.Interfaces;
+using MOVE.Application.Interfaces;
 
 namespace MOVE.Application.Products.Queries;
 

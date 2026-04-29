@@ -1,6 +1,6 @@
 ﻿using MOVE.Domain.Entities;
 
-namespace MOVE.Domain.Interfaces;
+namespace MOVE.Application.Interfaces;
 
 public interface ICategoryRepository
 {
