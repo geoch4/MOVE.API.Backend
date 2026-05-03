@@ -1,45 +1,44 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MOVE.Application.Interfaces;
 using MOVE.Domain.Entities;
-using MOVE.Domain.Interfaces;
 using MOVE.Infrastructure.Data;
 
 namespace MOVE.Infrastructure.Repositories;
 
-public class CategoryRepository : ICategoryRepository
+public class ProductRepository : IProductRepository
 {
 	private readonly MoveDbContext _context;
 
-	public CategoryRepository(MoveDbContext context)
+	public ProductRepository(MoveDbContext context)
 	{
 		_context = context;
 	}
 
-	public async Task<IEnumerable<Category>> GetAllAsync()
-		=> await _context.Categories.Include(c => c.Products).ToListAsync();
+	public async Task<IEnumerable<Product>> GetAllAsync()
+		=> await _context.Products.Include(p => p.Category).ToListAsync();
 
-	public async Task<Category?> GetByIdAsync(int id)
-		=> await _context.Categories.Include(c => c.Products)
-			.FirstOrDefaultAsync(c => c.Id == id);
+	public async Task<Product?> GetByIdAsync(int id)
+		=> await _context.Products.Include(p => p.Category)
+			.FirstOrDefaultAsync(p => p.Id == id);
 
-	public async Task AddAsync(Category category)
+	public async Task AddAsync(Product product)
 	{
-		await _context.Categories.AddAsync(category);
+		await _context.Products.AddAsync(product);
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task UpdateAsync(Category category)
+	public async Task UpdateAsync(Product product)
 	{
-		_context.Categories.Update(category);
+		_context.Products.Update(product);
 		await _context.SaveChangesAsync();
 	}
 
 	public async Task DeleteAsync(int id)
 	{
-		var category = await GetByIdAsync(id);
-		if (category != null)
+		var product = await GetByIdAsync(id);
+		if (product != null)
 		{
-			_context.Categories.Remove(category);
+			_context.Products.Remove(product);
 			await _context.SaveChangesAsync();
 		}
 	}

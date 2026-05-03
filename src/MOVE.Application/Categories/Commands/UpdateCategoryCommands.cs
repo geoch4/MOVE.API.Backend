@@ -1,16 +1,16 @@
 ﻿using MediatR;
 using MOVE.Application.Interfaces;
-using MOVE.Domain.Interfaces;
+using MOVE.Domain.Common;
 
 namespace MOVE.Application.Categories.Commands;
 
 public record UpdateCategoryCommand(
 	int Id,
 	string Name,
-	string Description) : IRequest<bool>;
+	string Description) : IRequest<OperationResult>;
 
 public class UpdateCategoryCommandHandler
-	: IRequestHandler<UpdateCategoryCommand, bool>
+	: IRequestHandler<UpdateCategoryCommand, OperationResult>
 {
 	private readonly ICategoryRepository _repository;
 
@@ -19,18 +19,20 @@ public class UpdateCategoryCommandHandler
 		_repository = repository;
 	}
 
-	public async Task<bool> Handle(
+	public async Task<OperationResult> Handle(
 		UpdateCategoryCommand request,
 		CancellationToken cancellationToken)
 	{
 		var category = await _repository.GetByIdAsync(request.Id);
 
-		if (category == null) return false;
+		if (category == null)
+			return OperationResult.FailureResult("Category not found");
 
 		category.Name = request.Name;
 		category.Description = request.Description;
 
 		await _repository.UpdateAsync(category);
-		return true;
+
+		return OperationResult.SuccessResult();
 	}
 }

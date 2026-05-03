@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MOVE.Application.Interfaces;
 using MOVE.Domain.Entities;
-using MOVE.Domain.Interfaces;
 using MOVE.Infrastructure.Data;
 
 namespace MOVE.Infrastructure.Repositories;

@@ -20,24 +20,35 @@ public class ProductsController : ControllerBase
 	[HttpGet]
 	public async Task<IActionResult> GetAll()
 	{
-		var products = await _mediator.Send(new GetAllProductsQuery());
-		return Ok(products);
+		var result = await _mediator.Send(new GetAllProductsQuery());
+
+		if (!result.Success)
+			return BadRequest(result.FailureMessage);
+
+		return Ok(result.Data);
 	}
 
 	[HttpGet("{id}")]
 	public async Task<IActionResult> GetById(int id)
 	{
-		var product = await _mediator.Send(new GetProductByIdQuery(id));
-		if (product == null) return NotFound();
-		return Ok(product);
+		var result = await _mediator.Send(new GetProductByIdQuery(id));
+
+		if (!result.Success)
+			return NotFound(result.FailureMessage);
+
+		return Ok(result.Data);
 	}
 
 	[HttpPost]
 	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
 	{
-		var product = await _mediator.Send(command);
-		return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+		var result = await _mediator.Send(command);
+
+		if (!result.Success)
+			return BadRequest(result.FailureMessage);
+
+		return CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result.Data);
 	}
 
 	[HttpPut("{id}")]
@@ -45,8 +56,12 @@ public class ProductsController : ControllerBase
 	public async Task<IActionResult> Update(int id, [FromBody] UpdateProductCommand command)
 	{
 		if (id != command.Id) return BadRequest();
+
 		var result = await _mediator.Send(command);
-		if (!result) return NotFound();
+
+		if (!result.Success)
+			return NotFound(result.FailureMessage);
+
 		return NoContent();
 	}
 
@@ -55,7 +70,10 @@ public class ProductsController : ControllerBase
 	public async Task<IActionResult> Delete(int id)
 	{
 		var result = await _mediator.Send(new DeleteProductCommand(id));
-		if (!result) return NotFound();
+
+		if (!result.Success)
+			return NotFound(result.FailureMessage);
+
 		return NoContent();
 	}
 }

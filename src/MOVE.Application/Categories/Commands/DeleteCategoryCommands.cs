@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using MOVE.Application.Interfaces;
-using MOVE.Domain.Interfaces;
+using MOVE.Domain.Common;
 
 namespace MOVE.Application.Categories.Commands;
 
-public record DeleteCategoryCommand(int Id) : IRequest<bool>;
+public record DeleteCategoryCommand(int Id) : IRequest<OperationResult>;
 
 public class DeleteCategoryCommandHandler
-	: IRequestHandler<DeleteCategoryCommand, bool>
+	: IRequestHandler<DeleteCategoryCommand, OperationResult>
 {
 	private readonly ICategoryRepository _repository;
 
@@ -16,15 +16,17 @@ public class DeleteCategoryCommandHandler
 		_repository = repository;
 	}
 
-	public async Task<bool> Handle(
+	public async Task<OperationResult> Handle(
 		DeleteCategoryCommand request,
 		CancellationToken cancellationToken)
 	{
 		var category = await _repository.GetByIdAsync(request.Id);
 
-		if (category == null) return false;
+		if (category == null)
+			return OperationResult.FailureResult("Category not found");
 
 		await _repository.DeleteAsync(request.Id);
-		return true;
+
+		return OperationResult.SuccessResult();
 	}
 }

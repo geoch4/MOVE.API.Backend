@@ -2,13 +2,14 @@
 using MediatR;
 using MOVE.Application.DTOs;
 using MOVE.Application.Interfaces;
+using MOVE.Domain.Common;
 
 namespace MOVE.Application.Products.Queries;
 
-public record GetAllProductsQuery() : IRequest<IEnumerable<ProductDto>>;
+public record GetAllProductsQuery() : IRequest<OperationResult<IEnumerable<ProductDto>>>;
 
 public class GetAllProductsQueryHandler
-	: IRequestHandler<GetAllProductsQuery, IEnumerable<ProductDto>>
+	: IRequestHandler<GetAllProductsQuery, OperationResult<IEnumerable<ProductDto>>>
 {
 	private readonly IProductRepository _repository;
 	private readonly IMapper _mapper;
@@ -19,11 +20,12 @@ public class GetAllProductsQueryHandler
 		_mapper = mapper;
 	}
 
-	public async Task<IEnumerable<ProductDto>> Handle(
+	public async Task<OperationResult<IEnumerable<ProductDto>>> Handle(
 		GetAllProductsQuery request,
 		CancellationToken cancellationToken)
 	{
 		var products = await _repository.GetAllAsync();
-		return _mapper.Map<IEnumerable<ProductDto>>(products);
+		var dto = _mapper.Map<IEnumerable<ProductDto>>(products);
+		return OperationResult<IEnumerable<ProductDto>>.SuccessResult(dto);
 	}
 }

@@ -26,24 +26,32 @@ public class CategoriesController : ControllerBase
 	[HttpGet("{id}")]
 	public async Task<IActionResult> GetById(int id)
 	{
-		var category = await _mediator.Send(new GetCategoryByIdQuery(id));
-		if (category == null) return NotFound();
-		return Ok(category);
+		var result = await _mediator.Send(new GetCategoryByIdQuery(id));
+		if (!result.Success)
+			return NotFound(result.FailureMessage);
+		return Ok(result.Data);
 	}
-
 	[HttpPost]
 	public async Task<IActionResult> Create([FromBody] CreateCategoryCommand command)
 	{
-		var category = await _mediator.Send(command);
-		return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
+		var result = await _mediator.Send(command);
+
+		if (!result.Success)
+			return BadRequest(result.FailureMessage);
+
+		return CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result.Data);
 	}
 
 	[HttpPut("{id}")]
 	public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryCommand command)
 	{
 		if (id != command.Id) return BadRequest();
+
 		var result = await _mediator.Send(command);
-		if (!result) return NotFound();
+
+		if (!result.Success)
+			return NotFound(result.FailureMessage);
+
 		return NoContent();
 	}
 
@@ -51,7 +59,10 @@ public class CategoriesController : ControllerBase
 	public async Task<IActionResult> Delete(int id)
 	{
 		var result = await _mediator.Send(new DeleteCategoryCommand(id));
-		if (!result) return NotFound();
+
+		if (!result.Success)
+			return NotFound(result.FailureMessage);
+
 		return NoContent();
 	}
 }

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MOVE.Application.Behaviours;
 using MOVE.Application.Interfaces;
-using MOVE.Domain.Interfaces;
 using MOVE.Infrastructure.Data;
 using MOVE.Infrastructure.Repositories;
 
@@ -70,11 +69,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

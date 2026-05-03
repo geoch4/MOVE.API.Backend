@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MOVE.Application.Interfaces;
+using MOVE.Domain.Common;
 
 namespace MOVE.Application.Products.Commands;
 
@@ -10,10 +11,10 @@ public record UpdateProductCommand(
 	decimal Price,
 	int StockQuantity,
 	string ImageUrl,
-	int CategoryId) : IRequest<bool>;
+	int CategoryId) : IRequest<OperationResult>;
 
 public class UpdateProductCommandHandler
-	: IRequestHandler<UpdateProductCommand, bool>
+	: IRequestHandler<UpdateProductCommand, OperationResult>
 {
 	private readonly IProductRepository _repository;
 
@@ -22,13 +23,14 @@ public class UpdateProductCommandHandler
 		_repository = repository;
 	}
 
-	public async Task<bool> Handle(
+	public async Task<OperationResult> Handle(
 		UpdateProductCommand request,
 		CancellationToken cancellationToken)
 	{
 		var product = await _repository.GetByIdAsync(request.Id);
 
-		if (product == null) return false;
+		if (product == null)
+			return OperationResult.FailureResult("Product not found");
 
 		product.Name = request.Name;
 		product.Description = request.Description;
@@ -38,6 +40,7 @@ public class UpdateProductCommandHandler
 		product.CategoryId = request.CategoryId;
 
 		await _repository.UpdateAsync(product);
-		return true;
+
+		return OperationResult.SuccessResult();
 	}
 }

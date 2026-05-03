@@ -5,10 +5,10 @@ using MOVE.Application.Interfaces;
 
 namespace MOVE.Application.Categories.Queries;
 
-public record GetCategoryByIdQuery(int Id) : IRequest<CategoryDto?>;
+public record GetCategoryByIdQuery(int Id) : IRequest<OperationResult<CategoryDto>>;
 
 public class GetCategoryByIdQueryHandler
-	: IRequestHandler<GetCategoryByIdQuery, CategoryDto?>
+	: IRequestHandler<GetCategoryByIdQuery, OperationResult<CategoryDto>>
 {
 	private readonly ICategoryRepository _repository;
 	private readonly IMapper _mapper;
@@ -19,11 +19,13 @@ public class GetCategoryByIdQueryHandler
 		_mapper = mapper;
 	}
 
-	public async Task<CategoryDto?> Handle(
-		GetCategoryByIdQuery request,
-		CancellationToken cancellationToken)
+	public async Task<OperationResult<CategoryDto>> Handle(
+	GetCategoryByIdQuery request,
+	CancellationToken cancellationToken)
 	{
-		var category = await _repository.GetByIdAsync(request.Id);
-		return category == null ? null : _mapper.Map<CategoryDto>(category);
+		var result = await _mediator.Send(new GetCategoryByIdQuery(id));
+		if (!result.Success)
+			return NotFound(result.FailureMessage);
+		return Ok(result.Data);
 	}
 }
